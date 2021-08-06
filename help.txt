@@ -1,0 +1,212 @@
+API(Application programming Interface) and communication
+========================================
+specialization and communication 
+Medium of communication
+You -  Me  (knowledge-javacript)
+coomunication(Between 2 Application) - API (Application programming Interface) 
+Data Exchange
+  1) XML(extensible markup language)
+  2) JSON (javascript object notation)
+      - Look like object, array string
+      - really is String     
+
+
+Procedure of communication
+===================================
+CRUD and Request Feature
+(Structuring -REST API)
+
+
+(3rd party application server)-Book list
+
+facebook.com/nahid
+path- /nahid
+API Development - Server side  (javascript/python/java)
+
+Full structure: 
+====================================
+R-READ       GET       /books
+R-READ       GET       /books/:id
+C-CREATE     POST      /books
+U-UPDATE     PUT/PATCH /books/:id  
+D-DELETE     DELETE    /books/:id
+
+How to communicate
+=================================
+  XMLHttpRequest(old)
+  FETCH(MORE MODERN)
+  Axios
+
+/* old way */ 
+const xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+    if (this.readyState === 4 && this.status === 200) {
+       // Typical action to be performed when the document is ready:
+       document.getElementById("demo").innerHTML = xhttp.responseText;
+    }
+};
+xhttp.open("GET", "filename", true);
+xhttp.send();
+
+/* Modern approach */ 
+* Work in Promise way
+fetch('http://example.com/movies.json')
+  .then(response => response.json())
+  .then(data => console.log(data));
+
+
+How to Deal the data
+==================================
+  Asynchronous programming pattern
+    callback
+    promise
+    Async await (syntactic sugar)
+    class- use constructor function (syntactic sugar) 
+
+
+
+Asynchronous programming: youtube series
+
+Demonstration
+===============================
+DOCS: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+https://github.com/axios/axios
+Server: https://jsonplaceholder.typicode.com/
+
+
+//synchronous
+//Asynchronous
+console.log(1)
+console.log(2)
+// not done Immediately
+//=============================
+//setTimeout
+setTimeout(function () {
+  console.log(3)
+}, 2000)
+// API request(network Request)
+//Database request
+// I/O
+console.log(4)
+console.log(5)
+console.log(6)
+
+//Javascript is single threaded
+//one task at a time
+//one person
+//1)core javascript part(V8 engine)
+//2) browser part(microtask queue, queue)
+
+
+
+const http = {
+  get(url, callback) {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => callback(data.splice(0, 20)))
+      .catch((err) => callback(null, err))
+  },
+  getOne(url, callback) {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => callback(data))
+      .catch((err) => callback(null, err))
+  },
+  post(url, data, callback) {
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => callback(data))
+      .catch((err) => callback(null, err))
+  },
+  update(url, data, callback) {
+    fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => callback(data))
+      .catch((err) => callback(null, err))
+  },
+  delete(url, callback) {
+    fetch(url, {
+      method: 'DELETE'
+    })
+      .then((response) => response.json())
+      .then((data) => callback(data))
+      .catch((err) => callback(null, err))
+  }
+}
+
+
+
+function getTodos() {
+  http.get('https://jsonplaceholder.typicode.com/todos', function (data) {
+    console.log(data)
+  })
+}
+
+function getTodo(id) {
+  http.getOne(`https://jsonplaceholder.typicode.com/todos/${id}`, function (
+    data,
+    error
+  ) {
+    if (error) {
+      console.log('err', error)
+    } else {
+      console.log(data)
+    }
+  })
+}
+
+function addTodo() {
+  http.post(
+    'https://jsonplaceholder.typicode.com/todos',
+    {
+      userId: 1,
+      title: 'walking Around',
+      completed: true
+    },
+    function (data, err) {
+      if (err) {
+        console.error('err', err)
+      }
+      console.log(data)
+      getTodo(data.id)
+    }
+  )
+}
+
+function updateTodo() {
+  http.update(
+    'https://jsonplaceholder.typicode.com/todos/1',
+    {
+      title: 'walking around update'
+    },
+    function (data) {
+      console.log(data)
+    }
+  )
+}
+
+function deleteTodo() {
+  http.delete('https://jsonplaceholder.typicode.com/todos/1', function (data) {
+    console.log(data)
+  })
+}
+
+//add a todo
+//get the todo
+getTodos()
+addTodo()
+// getTodo()
+updateTodo()
+deleteTodo()
